@@ -1,2 +1,2 @@
-settings.py
-api/migrations/
+db.sqlite3
+.env
