@@ -79,7 +79,7 @@ DATABASES = {
 
 DATABASES["default"] = dj_database_url.parse(os.environ.get("DATABASE_URL"))
 
-AUTH_USER_MODEL = 'api.Member'
+AUTH_USER_MODEL = 'api.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

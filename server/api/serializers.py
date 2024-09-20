@@ -1,54 +1,69 @@
 from rest_framework import serializers
-from .models import Member, Location, Dependant, LabTest, Nurse, NurseLabTestAllocation, Payment, Booking
+from .models import User, Profile, Dependant, Facility, LabTest, NurseLabTestAllocation, Booking, Invoice, Payment
 
-# Location Serializer
-class LocationSerializer(serializers.ModelSerializer):
+# User Serializer
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Location
-        fields = '__all__'
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'email', 'role', 'dependants', 'is_verified', 'password', 'updated_at']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'role': {'read_only': True},
+            'updated_at': {'read_only': True},
+            'is_verified': {'read_only': True},
+            'dependants': {'read_only': True},
+        }
 
-# Member Serializer
-class MemberSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Member
-        fields = ['id', 'first_name', 'last_name', 'email', 'gender', 'phone', 'dob', 'location', 'password', 'date_joined']
-        # extra_kwargs = {'password': {'write_only': True}}
-        
     def create(self, validated_data):
-        return Member.objects.create_user(**validated_data)
+        user = User.objects.create_user(**validated_data)
+        return user
+
+# Profile Serializer
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
 
 # Dependant Serializer
 class DependantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dependant
-        fields = ['id', 'member', 'surname', 'others', 'dob', 'reg_date']
+        fields = '__all__'
+
+# Facility Serializer
+class FacilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Facility
+        fields = '__all__'
 
 # LabTest Serializer
 class LabTestSerializer(serializers.ModelSerializer):
     class Meta:
         model = LabTest
-        fields = ['id', 'test_name', 'test_description', 'test_cost', 'test_discount', 'availability', 'more_info', 'reg_date']
-
-# Nurse Serializer
-class NurseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Nurse
-        fields = ['id', 'surname', 'gender', 'email', 'phone', 'password', 'reg_date']
+        fields = '__all__'
 
 # NurseLabTestAllocation Serializer
 class NurseLabTestAllocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = NurseLabTestAllocation
-        fields = ['id', 'nurse', 'invoice_no', 'flag', 'reg_date']
-
-# Payment Serializer
-class PaymentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Payment
-        fields = ['id', 'invoice_no', 'total_amount', 'new_field', 'reg_date']
+        fields = '__all__'
 
 # Booking Serializer
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = ['id', 'member', 'booked_for', 'dependant', 'test', 'appointment_date', 'appointment_time', 'where_taken', 'latitude']
+        fields = '__all__'
+
+# Invoice Serializer
+class InvoiceSerializer(serializers.ModelSerializer):
+    balance_due = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Invoice
+        fields = ['id', 'booking', 'amount_due', 'amount_paid', 'discount', 'nurses', 'status', 'balance_due', 'created_at', 'updated_at']
+
+# Payment Serializer
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = '__all__'
